@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+import copy
 
 cell_char = '#'
 check_around = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
@@ -10,21 +11,21 @@ def init_grid(file):
         return [[i for i in line.strip()] for line in f]
 
 def empty_grid(grid):
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            if grid[i][j] == cell_char:
-                return False
+    for row in grid:
+        if cell_char in row:
+            return False
     return True
 
 def can_live(cell, i, j):
     cells_around = 0
     for pos in check_around:
         try:
-            if cell[i + pos[0]][j + pos[1]] == cell_char:
-                cells_around += 1
-        except:
+            if i + pos[0] >= 0 and j + pos[1] >= 0:
+                if cell[i + pos[0]][j + pos[1]] == cell_char:
+                    cells_around += 1
+        except IndexError:
             continue
-    if (cell[i][j] == cell_char):
+    if cell[i][j] == cell_char:
         if cells_around < 2 or cells_around > 3:
             return '.'
         else:
@@ -35,15 +36,12 @@ def can_live(cell, i, j):
         else:
             return '.'
 
-
 def print_grid(grid):
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            print(grid[i][j], end='')
-        print()
+    for row in grid:
+        print(''.join(row))
 
 def game_of_life(grid):
-    new_grid = grid
+    new_grid = copy.deepcopy(grid)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             new_grid[i][j] = can_live(grid, i, j)
