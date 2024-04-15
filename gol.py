@@ -53,10 +53,10 @@ def main(av):
     else:
         grid = init_grid(av[1])
         while not empty_grid(grid):
+            os.system("clear")
             print_grid(grid)
             grid = game_of_life(grid)
             time.sleep(1)
-            os.system("clear")
         print_grid(grid)
 
 if __name__ == '__main__':
