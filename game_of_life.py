@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import sys
 import pygame
 import numpy
@@ -88,8 +90,6 @@ def game_of_life(argv):
         grid = False if argv[4].lower() == "false" else True
     except ValueError:
         exit(84)
-
-    print(grid)
 
     #- Set window
     screen, cols, rows = init_window(x, y, size)
