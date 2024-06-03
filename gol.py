@@ -1,44 +1,39 @@
 import sys
-import os
-import time
+import pygame
 import copy
+import numpy as np
 
-cell_char = '#'
 check_around = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
-
-def init_grid(file):
-    with open(file) as f:
-        return [[i for i in line.strip()] for line in f]
-
-def empty_grid(grid):
-    for row in grid:
-        if cell_char in row:
-            return False
-    return True
+cell_size = 4
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 def can_live(cell, i, j):
     cells_around = 0
     for pos in check_around:
         try:
             if i + pos[0] >= 0 and j + pos[1] >= 0:
-                if cell[i + pos[0]][j + pos[1]] == cell_char:
+                if cell[i + pos[0]][j + pos[1]] == 1:
                     cells_around += 1
         except IndexError:
             continue
-    if cell[i][j] == cell_char:
+    if cell[i][j] == 1:
         if cells_around < 2 or cells_around > 3:
-            return '.'
+            return 0
         else:
-            return cell_char
+            return 1
     else:
         if cells_around == 3:
-            return cell_char
+            return 1
         else:
-            return '.'
+            return 0
 
-def print_grid(grid):
-    for row in grid:
-        print(''.join(row))
+def draw_grid(grid, size, screen):
+    for row in range(size):
+        for col in range(size):
+            color = WHITE if grid[row, col] else BLACK
+            pygame.draw.rect(screen, color,
+                pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size))
 
 def game_of_life(grid):
     new_grid = copy.deepcopy(grid)
@@ -48,19 +43,26 @@ def game_of_life(grid):
     return new_grid
 
 def main(av):
-    if len(av) != 2:
+    if len(av) != 3:
         exit(84)
-    else:
-        grid = init_grid(av[1])
-        while not empty_grid(grid):
-            try:
-                os.system("clear")
-                print_grid(grid)
-                grid = game_of_life(grid)
-                time.sleep(1)
-            except KeyboardInterrupt:
+
+    try:
+        size = int(av[1])
+        cycles = int(av[2])
+    except ValueError:
+        exit(84)
+
+    pygame.display.set_caption('Game of Life')
+    screen = pygame.display.set_mode((size * cell_size, size * cell_size))
+    grid = np.random.randint(2, size=(size, size))
+    for i in range(cycles):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 return
-        print_grid(grid)
+        grid = game_of_life(grid)
+        draw_grid(grid, size, screen)
+        pygame.display.flip()
+        pygame.time.wait(500)
 
 if __name__ == '__main__':
     main(sys.argv)
