@@ -46,12 +46,24 @@ def update_cells(grid):
     return new_grid
 
 #- Draw cells
-def draw_cells(screen, cells, size):
+def draw_cells(screen, cells, size, grid):
+    #- Set background
+    screen.fill(color_dead)
+
+    #- Set cells
     for x in range(cells.shape[0]):
         for y in range(cells.shape[1]):
             color = color_live if cells[x, y] else color_dead
             pygame.draw.rect(screen, color, (x * size, y * size, size, size))
 
+    #- Set grid
+    if grid:
+        for i in range(cells.shape[0] + 1):
+            pygame.draw.line(screen, (128, 128, 128), (i * size, 0), (i * size, cells.shape[1] * size))
+        for j in range(cells.shape[1] + 1):
+            pygame.draw.line(screen, (128, 128, 128), (0, j * size), (cells.shape[0] * size, j * size))
+
+    #- Display
     pygame.display.flip()
 
 # ========================================================
@@ -66,15 +78,18 @@ def game_of_life(argv):
     clock = pygame.time.Clock()
 
     #- Error handling
-    if len(argv) != 4:
+    if len(argv) != 5:
         exit(84)
 
     try:
         x = int(argv[1])
         y = int(argv[2])
         size = int(argv[3])
+        grid = False if argv[4].lower() == "false" else True
     except ValueError:
         exit(84)
+
+    print(grid)
 
     #- Set window
     screen, cols, rows = init_window(x, y, size)
@@ -84,8 +99,6 @@ def game_of_life(argv):
 
     #- Loop
     while running:
-        screen.fill(color_dead)
-
         #- Events : Launch and reload game of life
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -110,7 +123,7 @@ def game_of_life(argv):
                 interval_update = current_time
 
         #- Draw cells
-        draw_cells(screen, cells, size)
+        draw_cells(screen, cells, size, grid)
 
         #- Set clock tick
         clock.tick(60)
