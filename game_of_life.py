@@ -115,7 +115,10 @@ def game_of_life(argv):
         #- Add cell if user click
         if pygame.mouse.get_pressed()[0] and pause:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            cells[mouse_x // size, mouse_y // size] = 1
+            try:
+                cells[mouse_x // size, mouse_y // size] = 1
+            except:
+                pass
 
         #- Update cells if program is paused
         if not pause:
@@ -128,7 +131,7 @@ def game_of_life(argv):
         draw_cells(screen, cells, size, grid)
 
         #- Set clock tick
-        clock.tick(60)
+        clock.tick(120)
 
     #- Quit window
     pygame.quit()
