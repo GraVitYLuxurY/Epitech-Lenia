@@ -81,6 +81,7 @@ def game_of_life(argv):
 
     #- Error handling
     if len(argv) != 5:
+        print("Usage: ./game_of_life [win_x] [win_y] [cell_size] [grid ?]")
         exit(84)
 
     try:
@@ -89,6 +90,7 @@ def game_of_life(argv):
         size = int(argv[3])
         grid = False if argv[4].lower() == "false" else True
     except ValueError:
+        print("Usage: ./game_of_life [win_x] [win_y] [cell_size] [grid ?]")
         exit(84)
 
     #- Set window
