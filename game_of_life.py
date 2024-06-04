@@ -78,6 +78,7 @@ def game_of_life(argv):
     interval = 100
     interval_update = pygame.time.get_ticks()
     clock = pygame.time.Clock()
+    old_x, old_y, old_color = -1, -1, -1
 
     #- Error handling
     if len(argv) != 5:
@@ -116,9 +117,16 @@ def game_of_life(argv):
         if pygame.mouse.get_pressed()[0] and pause:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             try:
-                cells[mouse_x // size, mouse_y // size] = 1
+                cell_x, cell_y = mouse_x // size, mouse_y // size
+
+                if (old_color == cells[cell_x, cell_y] or old_color == -1) and (old_x != cell_x or old_y != cell_y):
+                    old_color = cells[cell_x, cell_y]
+                    cells[cell_x, cell_y] = 1 if cells[cell_x, cell_y] == 0 else 0
+                    old_x, old_y = cell_x, cell_y
             except:
                 pass
+        elif pause:
+            old_color = -1
 
         #- Update cells if program is paused
         if not pause:
